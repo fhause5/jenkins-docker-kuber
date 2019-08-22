@@ -1,9 +1,10 @@
 pipeline {
 
-  environment {
-    registry = "10.23.8.126:5000"
-    dockerImage = ""
-  }
+    environment {
+        registry = "snap032/backend"
+        registryCredential = 'dockerhub'
+        dockerImage = ""
+    }
 
   agent any
 
@@ -14,11 +15,17 @@ pipeline {
         git 'https://github.com/justmeandopensource/playjenkins.git'
       }
     }
+    agent {
+        node {
+            label 'jenkins-jenkins-slave'
+        }
+    }
+    
 
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker.build "snap" + ":$BUILD_NUMBER"
+          dockerImage = docker.build registry + ":$BUILD_NUMBER"
         }
       }
     }
